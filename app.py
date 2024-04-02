@@ -81,12 +81,18 @@ def main():
     # User input
     user_input = st.text_area("Enter your project requirements:")
 
+    # Agent output stream
+    agent_output = st.empty()
+
     if st.button("Generate Code"):
         try:
             # Technical Consultant interaction
             with st.spinner("Technical Consultant is refining your requirements..."):
                 technical_consultant_task = tasks.technical_consultant_task(technical_consultant_agent, user_input)
                 refined_requirements = agent.run(technical_consultant_task.description)
+                
+                # Capture the agent's output stream
+                agent_output.text_area("Agent Output", value=agent.memory.buffer, height=200)
                 
                 # Add human input for Technical Consultant
                 human_input_technical_consultant = st.text_input("Provide additional input for Technical Consultant (optional):")
@@ -111,6 +117,9 @@ def main():
                         initial_coder_task = tasks.initial_coder_task(initial_coder_agent, refined_requirements)
                         generated_code = agent.run(initial_coder_task.description)
                         
+                        # Capture the agent's output stream
+                        agent_output.text_area("Agent Output", value=agent.memory.buffer, height=200)
+                        
                         # Add human input for Initial Coder
                         human_input_initial_coder = st.text_input("Provide additional input for Initial Coder (optional):")
                         if human_input_initial_coder:
@@ -124,6 +133,9 @@ def main():
                         senior_code_reviewer_task = tasks.senior_code_reviewer_task(senior_code_reviewer_agent, generated_code)
                         code_review = agent.run(senior_code_reviewer_task.description)
                         
+                        # Capture the agent's output stream
+                        agent_output.text_area("Agent Output", value=agent.memory.buffer, height=200)
+                        
                         # Add human input for Senior Code Reviewer
                         human_input_code_reviewer = st.text_input("Provide additional input for Senior Code Reviewer (optional):")
                         if human_input_code_reviewer:
@@ -136,6 +148,9 @@ def main():
                     with st.spinner("Tester is testing the code..."):
                         tester_task = tasks.tester_task(tester_agent, generated_code)
                         test_results = agent.run(tester_task.description)
+                        
+                        # Capture the agent's output stream
+                        agent_output.text_area("Agent Output", value=agent.memory.buffer, height=200)
                         
                         # Add human input for Tester
                         human_input_tester = st.text_input("Provide additional input for Tester (optional):")
@@ -190,8 +205,9 @@ def main():
                     }
 
                     # Store code snippet with user feedback
-                    input_string = f"{generated_code}|||{json.dumps(metadata)}"
-                    AgentTools.store_code_snippet(input_string)
+                    AgentTools.store_code_snippet(generated_code, metadata)
+
+                    st.success("Code snippet and feedback added to the vector store!")
 
                 # Display the agent conversations
                 st.header("Agent Conversations")
