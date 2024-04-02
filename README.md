@@ -114,11 +114,7 @@ Please note that CodeSynthAI is currently a work in progress (WIP) and is in its
 <!-- Env Variables -->
 ### :key: Environment Variables
 
-To run this project, you will need to add the following environment variables to your .env file
-
-`API_KEY`
-
-`ANOTHER_API_KEY`
+TBA
 
 <!-- Getting Started -->
 ## :toolbox: Getting Started
@@ -201,6 +197,4 @@ Project Link: [https://github.com/peterzervas/CodeSynthAI
 - [CrewAI](https://www.crewai.com/)
 - [AgentCoder](https://arxiv.org/html/2312.13010v2)
 - [Awesome README](https://github.com/matiassingers/awesome-readme)
-Dr. Andrew Ng ( For the inspiration )
-
-<iframe width="560" height="315" src="https://www.youtube.com/embed/sal78ACtGTc?si=Gd_0H6Qx7Hq4o9Yt" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+- [What's next for AI agentic workflows ft. Andrew Ng of AI Fund](https://www.youtube.com/watch?v=sal78ACtGTc&ab_channel=SequoiaCapital)
