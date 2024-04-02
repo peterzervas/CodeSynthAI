@@ -183,13 +183,8 @@ See `contributing.md` for ways to get started.
 
 Distributed under the MIT License. See LICENSE for more information.
 
-<!-- Contact -->
+<!-- Contact
 ## :handshake: Contact
-
-<!-- Your Name - [@twitter_handle](https://twitter.com/twitter_handle) - <email@email_client.com> -->
-
-Project Link: [https://github.com/peterzervas/CodeSynthAI
-](https://github.com/Louis3797/awesome-readme-template)
 
 <!-- Acknowledgments -->
 ## :gem: Acknowledgements
