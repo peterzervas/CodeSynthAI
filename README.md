@@ -42,8 +42,8 @@ Maybe you can mention me or this repo in the acknowledgements too
 </div>
 
 <br />
-<!-- Table of Contents -->
-# :notebook_with_decorative_cover: Table of Contents
+
+## :notebook_with_decorative_cover: Table of Contents
 
 - [About the Project](#star2-about-the-project)
 - [Screenshots](#camera-screenshots)
@@ -162,6 +162,7 @@ Provide feedback on the generated code by selecting "👍 Thumbs Up" or "👎 Th
 ## :compass: Roadmap
 
 - [x] Initial proof-of-concept release
+- [ ] Requirements
 - [ ] Expand support to other programming languages
 - [ ] Improve code quality and reliability
 - [ ] Integrate with version control systems
