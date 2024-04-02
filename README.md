@@ -49,20 +49,17 @@ Maybe you can mention me or this repo in the acknowledgements too
 - [Screenshots](#camera-screenshots)
 - [Tech Stack](#space_invader-tech-stack)
 - [Features](#dart-features)
-- [Color Reference](#art-color-reference)
 - [Environment Variables](#key-environment-variables)
 - [Getting Started](#toolbox-getting-started)
 - [Prerequisites](#bangbang-prerequisites)
 - [Installation](#gear-installation)
-- [Run Locally](#running-run-locally)
-- [Deployment](#triangular_flag_on_post-deployment)
 - [Usage](#eyes-usage)
 - [Roadmap](#compass-roadmap)
 - [Contributing](#wave-contributing)
-- [Code of Conduct](#scroll-code-of-conduct)
-- [FAQ](#grey_question-faq)
+<!-- - [Code of Conduct](#scroll-code-of-conduct) -->
+<!-- - [FAQ](#grey_question-faq) -->
 - [License](#warning-license)
-- [Contact](#handshake-contact)
+<!-- - [Contact](#handshake-contact) -->
 - [Acknowledgements](#gem-acknowledgements)
 
 <!-- About the Project -->
@@ -142,8 +139,9 @@ TBA
     OpenAI: Set the OPENAI_API_KEY environment variable.
     Anthropic: Set the ANTHROPIC_API_KEY environment variable.
     Pinecone: Set the PINECONE_API_KEY and PINECONE_ENVIRONMENT environment variables.
-<!-- Run Locally -->
+
 ### :running: Run Locally
+
 1. Start the Streamlit app
     ```bash
     streamlit run app.py
