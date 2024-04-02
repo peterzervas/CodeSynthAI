@@ -19,12 +19,12 @@ ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY")
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
 # Initialize CrewAI
-tasks = CustomTasks(topic="AI-Powered Software Development", section="Code Generation")
+tasks = CustomTasks(topic="CodySynthAI", section="Code Generation")
 agents = CustomAgents()
 
 # Streamlit app
 def main():
-    st.set_page_config(page_title="AI-Powered Software Development", page_icon=":robot_face:", layout="wide")
+    st.set_page_config(page_title="CodySynthAI", page_icon=":robot_face:", layout="wide")
 
     # Set dark mode theme
     dark_mode = st.sidebar.checkbox("Dark Mode", value=True)
@@ -53,12 +53,12 @@ def main():
             unsafe_allow_html=True,
         )
 
-    st.title("AI-Powered Software Development")
+    st.title("CodySynthAI")
 
     # Sidebar
     st.sidebar.title("Settings")
     iterations = st.sidebar.slider("Number of Iterations", min_value=1, max_value=10, value=5, step=1)
-    system_prompt_text = st.sidebar.text_area("System Prompt", value="You are a multi-agent software development system.", height=200)
+    #system_prompt_text = st.sidebar.text_area("System Prompt", value="You are a multi-agent software development system.", height=100)
 
     # Initialize agents
     technical_consultant_agent = agents.technical_consultant()
@@ -79,7 +79,7 @@ def main():
     )
 
     # User input
-    user_input = st.text_area("Enter your project requirements:")
+    user_input = st.text_area("Enter your script requirements:")
 
     # Agent output stream
     agent_output = st.empty()
@@ -92,7 +92,7 @@ def main():
                 refined_requirements = agent.run(technical_consultant_task.description)
                 
                 # Capture the agent's output stream
-                agent_output.text_area("Agent Output", value=agent.memory.buffer, height=200)
+                agent_output.text_area("Agent Output", value=agent.memory.buffer, height=100)
                 
                 # Add human input for Technical Consultant
                 human_input_technical_consultant = st.text_input("Provide additional input for Technical Consultant (optional):")
@@ -108,7 +108,7 @@ def main():
         st.write(refined_requirements)
 
         if st.button("Confirm Requirements"):
-            if st.button("Start Development"):
+            if st.button("Start Scripting"):
                 # Development cycle
                 iteration_logs = []
                 for i in range(iterations):
@@ -224,7 +224,7 @@ def main():
             else:
                 st.stop()
         else:
-            st.warning("Please confirm the requirements before starting the development.")
+            st.warning("Please confirm the requirements before starting the agents.")
 
 if __name__ == "__main__":
     main()

@@ -75,10 +75,9 @@ Please note that CodeSynthAI is currently a work in progress (WIP) and is in its
 
 <!-- Screenshots -->
 ### :camera: Screenshots
-Need to add.
 <!-- <div align="center">
   <img src="https://placehold.co/600x400?text=Your+Screenshot+here" alt="screenshot" /> -->
-</div>
+<!-- </div> -->
 
 <!-- TechStack -->
 ### :space_invader: Tech Stack
@@ -202,5 +201,6 @@ Project Link: [https://github.com/peterzervas/CodeSynthAI
 - [CrewAI](https://www.crewai.com/)
 - [AgentCoder](https://arxiv.org/html/2312.13010v2)
 - [Awesome README](https://github.com/matiassingers/awesome-readme)
-Dr. Andrew Ng ( For the insperation )
+Dr. Andrew Ng ( For the inspiration )
+
 <iframe width="560" height="315" src="https://www.youtube.com/embed/sal78ACtGTc?si=Gd_0H6Qx7Hq4o9Yt" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
