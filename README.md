@@ -73,8 +73,9 @@ Please note that CodeSynthAI is currently a work in progress (WIP) and is in its
 <!-- Screenshots -->
 ### :camera: Screenshot(s)
 
- <img src="https://github.com/peterzervas/CodeSynthAI/blob/main/assets/screenshot_01.png?raw=true"/>
-
+<img src="https://github.com/peterzervas/CodeSynthAI/blob/main/assets/screenshot_01.png?raw=true"/>
+<img src="https://github.com/peterzervas/CodeSynthAI/blob/main/assets/screenshot_02.png?raw=true"/>
+<img src="https://github.com/peterzervas/CodeSynthAI/blob/main/assets/screenshot_03.png?raw=true"/>
 
 <!-- TechStack -->
 ### :space_invader: Tech Stack
