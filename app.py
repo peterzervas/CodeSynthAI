@@ -75,20 +75,20 @@ def main(user_input):
     logger.debug(f"Number of iterations set to {iterations}")
 
     # User input for terminal output
-    terminal_input = st.text_area("Enter your terminal input:")
-    logger.debug(f"Terminal input: {terminal_input}")
+    # terminal_input = st.text_area("Enter your terminal input:")
+    # logger.debug(f"Terminal input: {terminal_input}")
 
     # Display terminal output
-    if terminal_input:
-        terminal_output = get_terminal_output(terminal_input)
-        st.code(terminal_output, language="text")
-        logger.info(f"Terminal output displayed: {terminal_output}")
+    # if terminal_input:
+    #     terminal_output = get_terminal_output(terminal_input)
+    #     st.code(terminal_output, language="text")
+    #     logger.info(f"Terminal output displayed: {terminal_output}")
 
     # Agent streaming window
     agent_output = st.empty()
 
     # User interaction input
-    user_interaction = st.text_input("Interact with the agents:")
+    user_interaction = st.text_area("Interact with the agents:")
     logger.debug(f"User interaction: {user_interaction}")
 
     if st.button("Generate Code"):
@@ -128,14 +128,14 @@ def main(user_input):
         result = crew.kickoff()
         logger.info(f"Code generation completed: {result}")
 
-        # Display agent streaming output
-        agent_output.text_area("Agent Output", result, height=200)
-        logger.debug(f"Agent output displayed: {result}")
-
         # Display generated code
         st.header("Generated Code")
         result = st.code(result, language="python")
         logger.debug(f"Generated code displayed: {result}")
+
+        # Display agent streaming output
+        # agent_output.text_area("Agent Output", result, height=200)
+        # logger.debug(f"Agent output displayed: {result}")
 
         # User confirmation and code download
         if st.button("Confirm and Save Code"):

@@ -23,7 +23,7 @@ class CustomAgents:
             memory=True,
             allow_delegation=True,
             callbacks=self.callbacks,
-            llm=self.OpenAIGPT35
+            llm=self.OpenAIGPT4
         )
         return agent
 
@@ -39,7 +39,7 @@ class CustomAgents:
             memory=True,
             allow_delegation=True,
             callbacks=self.callbacks,
-            llm=self.OpenAIGPT35
+            llm=self.OpenAIGPT4
         )
         return agent
 
@@ -55,7 +55,7 @@ class CustomAgents:
             memory=True,
             allow_delegation=True,
             callbacks=self.callbacks,
-            llm=self.OpenAIGPT35
+            llm=self.OpenAIGPT4
         )
         return agent
 
@@ -71,6 +71,6 @@ class CustomAgents:
             memory=True,
             allow_delegation=True,
             callbacks=self.callbacks,
-            llm=self.OpenAIGPT35
+            llm=self.OpenAIGPT4
         )
         return agent
