@@ -71,7 +71,7 @@ def main(user_input):
 
     # Sidebar
     st.sidebar.title("Settings")
-    iterations = st.sidebar.slider("Number of Iterations", min_value=1, max_value=10, value=5, step=1)
+    iterations = st.sidebar.slider("Number of Iterations", min_value=15, max_value=100, value=15, step=10)
     logger.debug(f"Number of iterations set to {iterations}")
 
     # User input for terminal output
@@ -85,7 +85,7 @@ def main(user_input):
     #     logger.info(f"Terminal output displayed: {terminal_output}")
 
     # Agent streaming window
-    agent_output = st.empty()
+    # agent_output = st.empty()
 
     # User interaction input
     user_interaction = st.text_area("Interact with the agents:")
