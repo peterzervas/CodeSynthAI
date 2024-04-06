@@ -1,0 +1,20 @@
+1. Main.py Test Cases:
+- Ensure the game initializes correctly.
+- Verify the main game loop runs without errors.
+
+2. Player.py Test Cases:
+- Test player movement left and right.
+- Ensure player cannot move beyond screen bounds.
+
+3. Enemy.py Test Cases:
+- Verify enemy movement pattern across the screen.
+- Check enemies move down upon hitting the screen's edge.
+
+4. Bullet.py Test Cases:
+- Test shooting mechanism with spacebar.
+- Ensure bullet movement is upwards.
+- Check collision detection with enemies.
+
+5. Scoreboard.py Test Cases:
+- Verify score is displayed on the screen.
+- Check game over message appears when the player is hit.

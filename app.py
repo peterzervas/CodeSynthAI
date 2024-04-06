@@ -1,12 +1,17 @@
 import os
 from dotenv import load_dotenv
 import streamlit as st
-from crewai import Crew
+from langchain_openai import ChatOpenAI
+from crewai import Crew, Process, Agent
 from tasks import CustomTasks
 from agents import CustomAgents
 import sys
 import io
 from loguru import logger
+import zipfile
+import tempfile
+from tools.AgentTools import AgentTools
+
 
 # Load environment variables from .env file
 load_dotenv()
@@ -36,7 +41,7 @@ agents = CustomAgents()
 tasks = CustomTasks(topic="Create production python code", section="Code Generation")
 
 # Streamlit app
-def main(user_input):
+def main(user_interaction):
     st.set_page_config(page_title="CodeSynthAI", page_icon=":robot_face:", layout="wide")
     logger.info("Streamlit app started")
 
@@ -74,20 +79,6 @@ def main(user_input):
     iterations = st.sidebar.slider("Number of Iterations", min_value=15, max_value=100, value=15, step=10)
     logger.debug(f"Number of iterations set to {iterations}")
 
-    # User input for terminal output
-    # terminal_input = st.text_area("Enter your terminal input:")
-    # logger.debug(f"Terminal input: {terminal_input}")
-
-    # Display terminal output
-    # if terminal_input:
-    #     terminal_output = get_terminal_output(terminal_input)
-    #     st.code(terminal_output, language="text")
-    #     logger.info(f"Terminal output displayed: {terminal_output}")
-
-    # Agent streaming window
-    # agent_output = st.empty()
-
-    # User interaction input
     user_interaction = st.text_area("Interact with the agents:")
     logger.debug(f"User interaction: {user_interaction}")
 
@@ -95,13 +86,13 @@ def main(user_input):
         logger.info("Code generation started")
 
         # Create Agents
-        technical_consultant_agent = agents.technical_consultant()
+        technical_consultant_manager = agents.technical_consultant_manager()
         initial_coder_agent = agents.initial_coder()
         senior_code_reviewer_agent = agents.senior_code_reviewer()
         tester_agent = agents.tester()
 
         # Create Tasks
-        technical_consultation = tasks.technical_consultant_task(technical_consultant_agent, user_interaction)
+        technical_consultation = tasks.technical_consultant_task(technical_consultant_manager, user_interaction)
         code_generation = tasks.initial_coder_task(initial_coder_agent, technical_consultation.expected_output, user_interaction)
         code_review = tasks.senior_code_reviewer_task(senior_code_reviewer_agent, code_generation.expected_output, technical_consultation.expected_output, user_interaction)
         testing = tasks.tester_task(tester_agent, code_generation.expected_output, technical_consultation.expected_output, user_interaction)
@@ -111,7 +102,7 @@ def main(user_input):
         # Create Crew
         crew = Crew(
             agents=[
-                technical_consultant_agent,
+                technical_consultant_manager,
                 initial_coder_agent,
                 senior_code_reviewer_agent,
                 tester_agent
@@ -121,7 +112,11 @@ def main(user_input):
                 code_generation,
                 code_review,
                 testing
-            ]
+            ],
+            manager_llm=ChatOpenAI(temperature=0, model="gpt-4"),
+            process=Process.hierarchical,
+            tools=AgentTools().tools(),
+            memory=True,
         )
 
         # Run the crew
@@ -137,31 +132,47 @@ def main(user_input):
         # agent_output.text_area("Agent Output", result, height=200)
         # logger.debug(f"Agent output displayed: {result}")
 
-        # User confirmation and code download
-        if st.button("Confirm and Save Code"):
-            logger.info("User confirmed and saved the code")
+        # Display generated files
+        project_dir = f"./workdir/"
+        if os.path.exists(project_dir):
+            st.header("Generated Files")
+            files = os.listdir(project_dir)
+            for file_name in files:
+                file_path = os.path.join(project_dir, file_name)
+                with open(file_path, "r") as file:
+                    file_content = file.read()
+                    st.subheader(file_name)
+                    st.code(file_content, language="python")
 
-            # Save the generated code locally
-            with open("generated_code.py", "w") as file:
-                file.write(result)
-            logger.debug("Generated code saved locally")
+                # Download individual file
+                with open(file_path, "rb") as file:
+                    download_button = st.download_button(
+                        label=f"Download {file_name}",
+                        data=file,
+                        file_name=file_name,
+                        mime="text/plain"
+                    )
 
-            # Provide a download link for the generated code
-            with open("generated_code.py", "rb") as file:
+            # Download all files as a zip
+            with tempfile.SpooledTemporaryFile() as tmp:
+                with zipfile.ZipFile(tmp, "w", zipfile.ZIP_DEFLATED) as zip_file:
+                    for file_name in files:
+                        file_path = os.path.join(project_dir, file_name)
+                        zip_file.write(file_path, file_name)
+                tmp.seek(0)
                 download_button = st.download_button(
-                    label="Download Generated Code",
-                    data=file,
-                    file_name="generated_code.py",
-                    mime="text/plain"
+                    label="Download All Files (ZIP)",
+                    data=tmp,
+                    file_name="generated_files.zip",
+                    mime="application/zip"
                 )
-            logger.debug("Download link provided for generated code")
 
-        # User interaction with agents
-        if user_interaction:
-            # Pass the user interaction to the relevant agent or task
-            # and update the agent streaming output
-            # (Implement the logic based on your specific requirements)
-            logger.debug(f"User interaction processed: {user_interaction}")
+                # User interaction with agents
+                if user_interaction:
+                    # Pass the user interaction to the relevant agent or task
+                    # and update the agent streaming output
+                    # (Implement the logic based on your specific requirements)
+                    logger.debug(f"User interaction processed: {user_interaction}")
 
 if __name__ == "__main__":
     main("")

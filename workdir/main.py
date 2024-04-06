@@ -1,0 +1,1 @@
+I should start by reviewing the `main.py` file as it integrates all other components and manages the game state. Understanding its structure and how it interacts with the other modules will give me a good overview of the game's architecture and potential areas of improvement.
