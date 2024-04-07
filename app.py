@@ -118,7 +118,7 @@ def main(user_input):
                 code_review,
                 testing
             ],
-            manager_llm=ChatOpenAI(temperature=0, model="gpt-3.5-turbo-1106"),
+            manager_llm=ChatOpenAI(temperature=0.3, model="gpt-3.5-turbo-1106"),
             process=Process.hierarchical,
             tools=AgentTools().tools(),
             memory=True,

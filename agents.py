@@ -7,7 +7,7 @@ class CustomAgents:
     def __init__(self, human_input=False, callbacks=None):
         self.human_input = human_input
         self.callbacks = callbacks
-        self.OpenAIGPT3 = ChatOpenAI(model_name="gpt-3.5-turbo", temperature=0.7)
+        self.OpenAIGPT3 = ChatOpenAI(model_name="gpt-3.5-turbo-1106", temperature=0.7)
         self.OpenAIGPT4 = ChatOpenAI(model_name="gpt-4-0125-preview", temperature=0.4)
 
     def technical_consultant(self):
@@ -40,7 +40,7 @@ class CustomAgents:
             """),
             verbose=True,
             memory=True,
-            allow_delegation=True,
+            allow_delegation=False,
             callbacks=self.callbacks,
             llm=self.OpenAIGPT3
         )
@@ -58,7 +58,7 @@ class CustomAgents:
             """),
             verbose=True,
             memory=True,
-            allow_delegation=True,
+            allow_delegation=False,
             callbacks=self.callbacks,
             llm=self.OpenAIGPT3
             
@@ -75,14 +75,12 @@ class CustomAgents:
             The coders are always trying to pull a fast one on you, don't trust them check the code, before running the tests.
             You always think the coders can do better.
             As a Tester, your mission is to thoroughly validate the functionality and reliability of the generated code.
-            Your meticulous testing approach and attention to edge cases will ensure a robust and error-free software solution.
-            Once testing is completed, provide the functional code in full, not the test code.
             """),
             verbose=True,
             memory=True,
             allow_delegation=True,
             callbacks=self.callbacks,
-            llm=self.OpenAIGPT3
+            llm=self.OpenAIGPT4
             
         )
         

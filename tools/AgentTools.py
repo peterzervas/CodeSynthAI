@@ -106,6 +106,23 @@ class AgentTools:
             return f"Python file '{file_name}' deleted successfully."
         except FileNotFoundError as e:
             return f"Error: File '{file_name}' not found in the 'workdir/projects' directory. Please make sure the file exists."
+    
+    @tool
+    def list_project_files():
+        """
+        List all the files in the 'workdir/projects' directory.
+        """
+        project_dir = os.path.join("workdir", "projects")
+        project_dir = os.path.normpath(project_dir)
+        try:
+            files = os.listdir(project_dir)
+            if files:
+                file_list = "\n".join(files)
+                return f"Files in the 'workdir/projects' directory:\n{file_list}"
+            else:
+                return "No files found in the 'workdir/projects' directory."
+        except FileNotFoundError as e:
+            return "Error: 'workdir/projects' directory not found. Please make sure the directory exists."
 
     def tools(self):
         return [
@@ -115,5 +132,6 @@ class AgentTools:
             self.edit_python_file,
             self.read_python_file,
             self.write_python_file,
-            self.delete_python_file
+            self.delete_python_file,
+            self.list_project_files
         ]

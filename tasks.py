@@ -34,8 +34,10 @@ class CustomTasks:
         return Task(
             description=dedent(
                 f"""
-                As the Technical Consultant, your task is to refine the user requirements into clear and concise technical specifications.
+                Before commenting that a file doesn't exist, use the 'list_project_files' tool to check the files in the 'workdir/projects' directory.
+                As the Technical Consultant and Manger, your task is to refine the user requirements into clear and concise technical specifications.
                 {self.__tip_section()}
+                You must ensure, the team is procducing quality code in full.
                 Make sure to consider the following user input: {user_input}
                 Focus on identifying the key functionalities, constraints and understanding the project.
                 Provide a detailed, well-structured set of technical specifications and guidance for the dev team.
@@ -57,7 +59,8 @@ class CustomTasks:
         return Task(
             description=dedent(
                 f"""
-                As the Initial Coder, your task is to generate clean, efficient, and well-documented code based on the technical specifications.
+                Before commenting that a file doesn't exist, use the 'list_project_files' tool to check the files in the 'workdir/projects' directory.
+                As the Initial Coder, your task is to generate clean, efficient, and well-documented code in full based on the technical specifications.
                 {self.__tip_section()}
                 Use the following technical specifications: {technical_specifications}
                 Ensure that the code follows best practices and coding standards.
@@ -66,12 +69,14 @@ class CustomTasks:
                 Use the 'create_markdown_file' tool to create new Markdown files in the 'workdir/projects' directory.
                 Use the 'run_python_file' tool to run and test the Python code.
                 Use the 'edit_python_file', 'read_python_file', 'write_python_file', and 'delete_python_file' tools to manipulate Python files in the 'workdir/projects' directory.
+                Once the dev team and the tester have presented the functioning and requested code, end the chain and present to the user.
                 """
             ),
             expected_output=dedent(
                 f"""
                 A clean, efficient, and well-documented code implementation that adheres to the provided technical specifications for the {user_input} & {technical_specifications} project.
                 The code should follow best practices, include necessary comments, and be structured in a logical and maintainable manner.
+                Once the dev team and the tester have presented the functioning and requested code, end the chain and present to the user.
                 """
             ),
             agent=agent,
@@ -84,6 +89,8 @@ class CustomTasks:
         return Task(
             description=dedent(
                 f"""
+                Before commenting that a file doesn't exist, use the 'list_project_files' tool to check the files in the 'workdir/projects' directory.
+                Only review if the code is fully complete, if not send back to the coder to finish the code.
                 As the Senior Code Reviewer, your task is to review the generated code and provide feedback and suggestions for improvement.
                 {self.__tip_section()}
                 Review the following generated code: {generated_code}
@@ -110,6 +117,7 @@ class CustomTasks:
         return Task(
             description=dedent(
                 f"""
+                Before commenting that a file doesn't exist, use the 'list_project_files' tool to check the files in the 'workdir/projects' directory.
                 Only test if the code is fully complete, if not send back to the devs to finish the code.
                 As the Tester, your task is to develop comprehensive test cases and execute them against the generated code.
                 {self.__tip_section()}
@@ -119,14 +127,14 @@ class CustomTasks:
                 Use the 'create_python_file' tool to create new test files in the 'workdir/projects' directory.
                 Use the 'run_python_file' tool to execute the test cases and provide detailed feedback and bug reports.
                 Even if you think you don't need to run the tests, you will run them.All tests create must be run.
-                Your Final answer should be the fully tested and functioning requested Python code, only the Python code and nothing else..
+                You must send the code back for review.
                 """
             ),
             expected_output=dedent(
                 """
                 Final fully test and functioing requested python code:
                 
-                Please review the generated code files in the 'workdir/projects' directory for more details.
+                Please review the generated code files in the 'workdir/projects' to the dev team.
                 """
             ),
             agent=agent,
