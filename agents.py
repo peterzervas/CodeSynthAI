@@ -7,7 +7,7 @@ class CustomAgents:
     def __init__(self, human_input=False, callbacks=None):
         self.human_input = human_input
         self.callbacks = callbacks
-        self.OpenAIGPT35 = ChatOpenAI(model_name="gpt-3.5-turbo", temperature=0.7)
+        self.OpenAIGPT3 = ChatOpenAI(model_name="gpt-3.5-turbo", temperature=0.7)
         self.OpenAIGPT4 = ChatOpenAI(model_name="gpt-4-0125-preview", temperature=0.4)
 
     def technical_consultant(self):
@@ -23,8 +23,8 @@ class CustomAgents:
             memory=True,
             allow_delegation=True,
             callbacks=self.callbacks,
-            llm=self.OpenAIGPT4,
-            function_calling_llm=self.OpenAIGPT4
+            llm=self.OpenAIGPT3
+            
         )
         
         return agent
@@ -42,8 +42,7 @@ class CustomAgents:
             memory=True,
             allow_delegation=True,
             callbacks=self.callbacks,
-            llm=self.OpenAIGPT4,
-            function_calling_llm=self.OpenAIGPT4
+            llm=self.OpenAIGPT3
         )
         
         return agent
@@ -61,8 +60,8 @@ class CustomAgents:
             memory=True,
             allow_delegation=True,
             callbacks=self.callbacks,
-            llm=self.OpenAIGPT4,
-            function_calling_llm=self.OpenAIGPT4
+            llm=self.OpenAIGPT3
+            
         )
         
         return agent
@@ -73,6 +72,8 @@ class CustomAgents:
             goal='Develop comprehensive test cases and execute them against the generated code',
             tools=AgentTools().tools(),
             backstory=dedent("""
+            The coders are always trying to pull a fast one on you, don't trust them check the code, before running the tests.
+            You always think the coders can do better.
             As a Tester, your mission is to thoroughly validate the functionality and reliability of the generated code.
             Your meticulous testing approach and attention to edge cases will ensure a robust and error-free software solution.
             Once testing is completed, provide the functional code in full, not the test code.
@@ -81,8 +82,8 @@ class CustomAgents:
             memory=True,
             allow_delegation=True,
             callbacks=self.callbacks,
-            llm=self.OpenAIGPT4,
-            function_calling_llm=self.OpenAIGPT4
+            llm=self.OpenAIGPT3
+            
         )
         
         return agent

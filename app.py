@@ -1,12 +1,21 @@
+# Standard library imports
+import io
 import os
+import sys
+import tempfile
+import zipfile
+
+# Third-party imports
 from dotenv import load_dotenv
 import streamlit as st
-from crewai import Crew
-from tasks import CustomTasks
-from agents import CustomAgents
-import sys
-import io
 from loguru import logger
+
+# Local application/library specific imports
+from agents import CustomAgents
+from crewai import Agent, Crew, Process
+from langchain_openai import ChatOpenAI
+from tasks import CustomTasks
+from tools.AgentTools import AgentTools
 
 # Load environment variables from .env file
 load_dotenv()
@@ -74,19 +83,6 @@ def main(user_input):
     iterations = st.sidebar.slider("Number of Iterations", min_value=1, max_value=10, value=5, step=1)
     logger.debug(f"Number of iterations set to {iterations}")
 
-    # User input for terminal output
-    # terminal_input = st.text_area("Enter your terminal input:")
-    # logger.debug(f"Terminal input: {terminal_input}")
-
-    # Display terminal output
-    # if terminal_input:
-    #     terminal_output = get_terminal_output(terminal_input)
-    #     st.code(terminal_output, language="text")
-    #     logger.info(f"Terminal output displayed: {terminal_output}")
-
-    # Agent streaming window
-    agent_output = st.empty()
-
     # User interaction input
     user_interaction = st.text_area("Interact with the agents:")
     logger.debug(f"User interaction: {user_interaction}")
@@ -121,7 +117,11 @@ def main(user_input):
                 code_generation,
                 code_review,
                 testing
-            ]
+            ],
+            manager_llm=ChatOpenAI(temperature=0, model="gpt-3.5-turbo-1106"),
+            process=Process.hierarchical,
+            tools=AgentTools().tools(),
+            memory=True,
         )
 
         # Run the crew
@@ -132,10 +132,6 @@ def main(user_input):
         st.header("Generated Code")
         result = st.code(result, language="python")
         logger.debug(f"Generated code displayed: {result}")
-
-        # Display agent streaming output
-        # agent_output.text_area("Agent Output", result, height=200)
-        # logger.debug(f"Agent output displayed: {result}")
 
         # User confirmation and code download
         if st.button("Confirm and Save Code"):

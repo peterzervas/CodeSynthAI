@@ -32,13 +32,13 @@ class CustomTasks:
     def technical_consultant_task(self, agent, user_input):
         logger.debug(f"User input: {user_input}")
         return Task(
-            description = dedent(
+            description=dedent(
                 f"""
                 As the Technical Consultant, your task is to refine the user requirements into clear and concise technical specifications.
                 {self.__tip_section()}
                 Make sure to consider the following user input: {user_input}
-                Focus on identifying the key functionalities and constraints of the project.
-                Provide a detailed and well-structured set of technical specifications.
+                Focus on identifying the key functionalities, constraints and understanding the project.
+                Provide a detailed, well-structured set of technical specifications and guidance for the dev team.
                 """
             ),
             expected_output=dedent(
@@ -62,6 +62,10 @@ class CustomTasks:
                 Use the following technical specifications: {technical_specifications}
                 Ensure that the code follows best practices and coding standards.
                 Provide comments and documentation to enhance code readability and maintainability.
+                Use the 'create_python_file' tool to create new Python files in the 'workdir/projects' directory.
+                Use the 'create_markdown_file' tool to create new Markdown files in the 'workdir/projects' directory.
+                Use the 'run_python_file' tool to run and test the Python code.
+                Use the 'edit_python_file', 'read_python_file', 'write_python_file', and 'delete_python_file' tools to manipulate Python files in the 'workdir/projects' directory.
                 """
             ),
             expected_output=dedent(
@@ -72,7 +76,7 @@ class CustomTasks:
             ),
             agent=agent,
         )
-    
+
     def senior_code_reviewer_task(self, agent, generated_code, technical_specifications, user_input):
         logger.debug(f"Generated code: {generated_code}")
         logger.debug(f"Technical specifications: {technical_specifications}")
@@ -85,17 +89,19 @@ class CustomTasks:
                 Review the following generated code: {generated_code}
                 Identify areas where the code can be optimized for performance, readability, and maintainability.
                 Provide clear and actionable feedback to help improve the code quality.
+                Use the 'read_python_file' tool to read the contents of Python files in the 'workdir/projects' directory.
+                Use the 'edit_python_file' tool to suggest improvements and update the Python files in the 'workdir/projects' directory.
+                Use the 'run_python_file' tool to test and run the Python code.
                 """
             ),
             expected_output=dedent(
                 f"""
-                A comprehensive code review that provides constructive feedback and suggestions for improving the generated code for the {user_input} & {technical_specifications}  project.
+                A comprehensive code review that provides constructive feedback and suggestions for improving the generated code for the {user_input} & {technical_specifications} project.
                 The review should cover aspects such as code optimization, readability, maintainability, and adherence to best practices.
                 """
             ),
             agent=agent,
         )
-
 
     def tester_task(self, agent, generated_code, technical_specifications, user_input):
         logger.debug(f"Generated code: {generated_code}")
@@ -104,19 +110,23 @@ class CustomTasks:
         return Task(
             description=dedent(
                 f"""
+                Only test if the code is fully complete, if not send back to the devs to finish the code.
                 As the Tester, your task is to develop comprehensive test cases and execute them against the generated code.
                 {self.__tip_section()}
                 Test the following generated code: {generated_code}
                 Create test cases that cover various scenarios, edge cases, and potential bugs.
-                Use the Python REPL to execute the test cases and provide detailed feedback and bug reports.
-                Your Final answer must be the full requested python code, only the python code and nothing else not the test code.
+                Use the 'read_python_file' tool to read the contents of Python files in the 'workdir/projects' directory.
+                Use the 'create_python_file' tool to create new test files in the 'workdir/projects' directory.
+                Use the 'run_python_file' tool to execute the test cases and provide detailed feedback and bug reports.
+                Even if you think you don't need to run the tests, you will run them.All tests create must be run.
+                Your Final answer should be the fully tested and functioning requested Python code, only the Python code and nothing else..
                 """
             ),
             expected_output=dedent(
-                f"""
-                A set of comprehensive test cases and their execution results for the {generated_code} based from {technical_specifications} & {user_input}.
-                The test cases should cover different scenarios, edge cases, and potential bugs to ensure the code's correctness and reliability.
-                Detailed feedback and bug reports should be provided based on the test execution results.
+                """
+                Final fully test and functioing requested python code:
+                
+                Please review the generated code files in the 'workdir/projects' directory for more details.
                 """
             ),
             agent=agent,
