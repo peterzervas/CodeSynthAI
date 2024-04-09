@@ -65,7 +65,7 @@ class AgentTools:
     @tool
     def read_python_file(file_name: str):
         """
-        Read the content of a Python file in the 'workdir/projects' directory with the given file name.
+        Read the content of a files in the 'workdir/projects' directory with the given file name.
         Example:
         - file_name: 'example.py'
         """

@@ -1,50 +1,24 @@
-# Standard library imports
-import io
 import os
 import sys
-import tempfile
-import zipfile
-
-# Third-party imports
-from dotenv import load_dotenv
 import streamlit as st
+from dotenv import load_dotenv
 from loguru import logger
-
-# Local application/library specific imports
+from crewai import Crew, Process
 from agents import CustomAgents
-from crewai import Agent, Crew, Process
-from langchain_openai import ChatOpenAI
 from tasks import CustomTasks
+from utils import print_agent_output
 from tools.AgentTools import AgentTools
 
 # Load environment variables from .env file
 load_dotenv()
 
 # Configure Loguru
-logger.remove()  # Remove the default logger
+logger.remove()
 logger.add(sys.stderr, colorize=False, format="<green>{time}</green> | <level>{level}</level> | <cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> - <level>{message}</level>")
 
-# Function to capture terminal output
-def get_terminal_output(user_input):
-    # Redirect stdout to a buffer
-    buffer = io.StringIO()
-    sys.stdout = buffer
-
-    # Run your code here (e.g., call the main() function)
-    main(user_input)
-
-    # Get the output from the buffer
-    output = buffer.getvalue()
-
-    # Reset stdout to its original value
-    sys.stdout = sys.__stdout__
-
-    return output
-
-agents = CustomAgents()
+agents = CustomAgents(human_input=False, callbacks=None)
 tasks = CustomTasks(topic="Create production python code", section="Code Generation")
 
-# Streamlit app
 def main(user_input):
     st.set_page_config(page_title="CodeSynthAI", page_icon=":robot_face:", layout="wide")
     logger.info("Streamlit app started")
@@ -80,6 +54,12 @@ def main(user_input):
 
     # Sidebar
     st.sidebar.title("Settings")
+    api_choice = st.sidebar.selectbox("Select API", ["OpenAI", "Anthropic"])
+    if api_choice == "OpenAI":
+        model_choice = st.sidebar.selectbox("Select OpenAI Model", ["gpt-3.5-turbo", "gpt-4"])
+    else:
+        model_choice = st.sidebar.selectbox("Select Anthropic Model", ["claude-3-haiku-20240307", "claude-3-sonnet-20240229", "claude-3-opus-20240229"])
+
     iterations = st.sidebar.slider("Number of Iterations", min_value=1, max_value=10, value=5, step=1)
     logger.debug(f"Number of iterations set to {iterations}")
 
@@ -91,10 +71,10 @@ def main(user_input):
         logger.info("Code generation started")
 
         # Create Agents
-        technical_consultant_agent = agents.technical_consultant()
-        initial_coder_agent = agents.initial_coder()
-        senior_code_reviewer_agent = agents.senior_code_reviewer()
-        tester_agent = agents.tester()
+        technical_consultant_agent = agents.technical_consultant(api_choice, model_choice)
+        initial_coder_agent = agents.initial_coder(api_choice, model_choice)
+        senior_code_reviewer_agent = agents.senior_code_reviewer(api_choice, model_choice)
+        tester_agent = agents.tester(api_choice, model_choice)
 
         # Create Tasks
         technical_consultation = tasks.technical_consultant_task(technical_consultant_agent, user_interaction)
@@ -118,10 +98,12 @@ def main(user_input):
                 code_review,
                 testing
             ],
-            manager_llm=ChatOpenAI(temperature=0.3, model="gpt-3.5-turbo-1106"),
+            manager_llm=agents.get_manager_llm(api_choice, model_choice),
             process=Process.hierarchical,
             tools=AgentTools().tools(),
             memory=True,
+            max_iter=iterations,
+            step_callback=lambda x: print_agent_output(x, "Crew Manager")
         )
 
         # Run the crew

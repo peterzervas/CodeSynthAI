@@ -1,16 +1,36 @@
+import os
+from dotenv import load_dotenv
 from textwrap import dedent
 from crewai import Agent
 from tools.AgentTools import AgentTools
-from langchain.chat_models import ChatOpenAI
+from langchain_openai import ChatOpenAI
+from langchain_anthropic import ChatAnthropic
+from utils import print_agent_output
+
+# Load environment variables from .env file
+load_dotenv()
+
+# Load Anthropic API key from environment variable
+ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY")
 
 class CustomAgents:
     def __init__(self, human_input=False, callbacks=None):
         self.human_input = human_input
         self.callbacks = callbacks
-        self.OpenAIGPT3 = ChatOpenAI(model_name="gpt-3.5-turbo-1106", temperature=0.7)
-        self.OpenAIGPT4 = ChatOpenAI(model_name="gpt-4-0125-preview", temperature=0.4)
 
-    def technical_consultant(self):
+    def get_llm(self, api_choice, model_choice):
+        if api_choice == "OpenAI":
+            return ChatOpenAI(model_name=model_choice, temperature=0.7)
+        else:
+            return ChatAnthropic(model=model_choice, anthropic_api_key=ANTHROPIC_API_KEY)
+
+    def get_manager_llm(self, api_choice, model_choice):
+        if api_choice == "OpenAI":
+            return ChatOpenAI(model_name="gpt-4", temperature=0.4)
+        else:
+            return ChatAnthropic(model="claude-3-sonnet-20240229", anthropic_api_key=ANTHROPIC_API_KEY)
+
+    def technical_consultant(self, api_choice, model_choice):
         agent = Agent(
             role='Technical Consultant',
             goal='Refine user requirements into clear and concise technical specifications',
@@ -23,13 +43,14 @@ class CustomAgents:
             memory=True,
             allow_delegation=True,
             callbacks=self.callbacks,
-            llm=self.OpenAIGPT3
-            
+            llm=self.get_llm(api_choice, model_choice),
+            max_iter=35,
+            step_callback=lambda x: print_agent_output(x, "Technical Consultant")
         )
         
         return agent
 
-    def initial_coder(self):
+    def initial_coder(self, api_choice, model_choice):
         agent = Agent(
             role='Initial Coder',
             goal='Generate clean, efficient, and well-documented code based on the technical specifications',
@@ -42,12 +63,14 @@ class CustomAgents:
             memory=True,
             allow_delegation=False,
             callbacks=self.callbacks,
-            llm=self.OpenAIGPT3
+            llm=self.get_llm(api_choice, model_choice),
+            max_iter=35,
+            step_callback=lambda x: print_agent_output(x, "Initial Coder")
         )
         
         return agent
 
-    def senior_code_reviewer(self):
+    def senior_code_reviewer(self, api_choice, model_choice):
         agent = Agent(
             role='Senior Code Reviewer',
             goal='Review the generated code and provide feedback for improvement',
@@ -60,28 +83,28 @@ class CustomAgents:
             memory=True,
             allow_delegation=False,
             callbacks=self.callbacks,
-            llm=self.OpenAIGPT3
-            
+            llm=self.get_llm(api_choice, model_choice),
+            max_iter=35,
+            step_callback=lambda x: print_agent_output(x, "Senior Code Reviewer")
         )
         
         return agent
 
-    def tester(self):
+    def tester(self, api_choice, model_choice):
         agent = Agent(
             role='Tester',
             goal='Develop comprehensive test cases and execute them against the generated code',
             tools=AgentTools().tools(),
             backstory=dedent("""
-            The coders are always trying to pull a fast one on you, don't trust them check the code, before running the tests.
-            You always think the coders can do better.
             As a Tester, your mission is to thoroughly validate the functionality and reliability of the generated code.
             """),
             verbose=True,
             memory=True,
             allow_delegation=True,
             callbacks=self.callbacks,
-            llm=self.OpenAIGPT4
-            
+            llm=self.get_llm(api_choice, model_choice),
+            max_iter=35,
+            step_callback=lambda x: print_agent_output(x, "Tester")
         )
         
         return agent
