@@ -17,7 +17,7 @@ logger.remove()
 logger.add(sys.stderr, colorize=False, format="<green>{time}</green> | <level>{level}</level> | <cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> - <level>{message}</level>")
 
 agents = CustomAgents(human_input=False, callbacks=None)
-tasks = CustomTasks(topic="Create production python code", section="Code Generation")
+tasks = CustomTasks(topic="Create python code", section="Code Generation")
 
 def main(user_input):
     st.set_page_config(page_title="CodeSynthAI", page_icon=":robot_face:", layout="wide")
@@ -50,7 +50,7 @@ def main(user_input):
             unsafe_allow_html=True,
         )
 
-    st.title("CodeSynthAI")
+    st.title("CodeSynthAI Chatbot")
 
     # Sidebar
     st.sidebar.title("Settings")
@@ -63,11 +63,21 @@ def main(user_input):
     iterations = st.sidebar.slider("Number of Iterations", min_value=1, max_value=10, value=5, step=1)
     logger.debug(f"Number of iterations set to {iterations}")
 
-    # User interaction input
-    user_interaction = st.text_area("Interact with the agents:")
-    logger.debug(f"User interaction: {user_interaction}")
+    if "messages" not in st.session_state:
+        st.session_state.messages = []
 
-    if st.button("Generate Code"):
+    for message in st.session_state.messages:
+        with st.chat_message(message["role"]):
+            st.markdown(message["content"])
+
+    user_interaction = st.chat_input("Interact with the agents:")
+    if user_interaction:
+        st.session_state.messages.append({"role": "user", "content": user_interaction})
+        with st.chat_message("user"):
+            st.markdown(user_interaction)
+
+        logger.debug(f"User interaction: {user_interaction}")
+
         logger.info("Code generation started")
 
         # Create Agents
@@ -83,6 +93,16 @@ def main(user_input):
         testing = tasks.tester_task(tester_agent, code_generation.expected_output, technical_consultation.expected_output, user_interaction)
         code_review.context = [technical_consultation, code_generation]
         testing.context = [technical_consultation, code_generation, code_review]
+
+        def update_agent_output(agent_output):
+            agent_name = agent_output["agent_name"]
+            output = print_agent_output(agent_output["output"], agent_name)
+
+            st.session_state.messages.append({"role": agent_name, "content": output})
+            with st.chat_message(agent_name):
+                st.markdown(output)
+
+            st.experimental_rerun()
 
         # Create Crew
         crew = Crew(
@@ -103,7 +123,7 @@ def main(user_input):
             tools=AgentTools().tools(),
             memory=True,
             max_iter=iterations,
-            step_callback=lambda x: print_agent_output(x, "Crew Manager")
+            step_callback=update_agent_output
         )
 
         # Run the crew
@@ -112,7 +132,7 @@ def main(user_input):
 
         # Display generated code
         st.header("Generated Code")
-        result = st.code(result, language="python")
+        st.code(result, language="python")
         logger.debug(f"Generated code displayed: {result}")
 
         # User confirmation and code download
@@ -134,12 +154,8 @@ def main(user_input):
                 )
             logger.debug("Download link provided for generated code")
 
-        # User interaction with agents
-        if user_interaction:
-            # Pass the user interaction to the relevant agent or task
-            # and update the agent streaming output
-            # (Implement the logic based on your specific requirements)
-            logger.debug(f"User interaction processed: {user_interaction}")
+        # Append the final result to the chat messages
+        st.session_state.messages.append({"role": "assistant", "content": result})
 
 if __name__ == "__main__":
     main("")
