@@ -30,81 +30,78 @@ class CustomAgents:
         else:
             return ChatAnthropic(model="claude-3-sonnet-20240229", anthropic_api_key=ANTHROPIC_API_KEY)
 
-    def technical_consultant(self, api_choice, model_choice):
+    def requirements_analyst(self, api_choice, model_choice):
         agent = Agent(
-            role='Technical Consultant',
-            goal='Refine user requirements into clear and concise technical specifications',
+            role='Requirements Analyst',
+            goal='Analyze user requirements, identify potential ambiguities or gaps, and gather necessary clarifications to create a comprehensive and clear set of technical requirements',
             tools=AgentTools().tools(),
             backstory=dedent("""
-            As a Technical Consultant, your expertise lies in understanding user requirements and translating them into actionable technical specifications.
-            Your insights will guide the development team to deliver a high-quality software solution that meets the user's needs.
+            As a Requirements Analyst, your expertise lies in understanding user needs, asking the right questions, and translating them into well-defined technical requirements that guide the development process.
             """),
             verbose=True,
             memory=True,
             allow_delegation=True,
             callbacks=self.callbacks,
             llm=self.get_llm(api_choice, model_choice),
-            max_iter=35,
-            step_callback=lambda x: print_agent_output(x, "Technical Consultant")
+            max_iter=5,
+            step_callback=lambda x: print_agent_output(x, "Requirements Analyst")
         )
         
         return agent
 
-    def initial_coder(self, api_choice, model_choice):
+    def code_generator(self, api_choice, model_choice):
         agent = Agent(
-            role='Initial Coder',
-            goal='Generate clean, efficient, and well-documented code based on the technical specifications',
+            role='Code Generator',
+            goal='Generate code based on the technical requirements, focusing on functionality, readability, and adherence to coding best practices',
             tools=AgentTools().tools(),
             backstory=dedent("""
-            As an Initial Coder, your responsibility is to transform the technical specifications into functional and maintainable code.
-            Your coding skills and attention to detail will lay the foundation for a robust software solution.
-            """),
-            verbose=True,
-            memory=True,
-            allow_delegation=False,
-            callbacks=self.callbacks,
-            llm=self.get_llm(api_choice, model_choice),
-            max_iter=35,
-            step_callback=lambda x: print_agent_output(x, "Initial Coder")
-        )
-        
-        return agent
-
-    def senior_code_reviewer(self, api_choice, model_choice):
-        agent = Agent(
-            role='Senior Code Reviewer',
-            goal='Review the generated code and provide feedback for improvement',
-            tools=AgentTools().tools(),
-            backstory=dedent("""
-            As a Senior Code Reviewer, your task is to ensure the quality and integrity of the generated code.
-            Your expertise in identifying potential issues, suggesting optimizations, and enforcing coding best practices will elevate the code to the highest standards.
-            """),
-            verbose=True,
-            memory=True,
-            allow_delegation=False,
-            callbacks=self.callbacks,
-            llm=self.get_llm(api_choice, model_choice),
-            max_iter=35,
-            step_callback=lambda x: print_agent_output(x, "Senior Code Reviewer")
-        )
-        
-        return agent
-
-    def tester(self, api_choice, model_choice):
-        agent = Agent(
-            role='Tester',
-            goal='Develop comprehensive test cases and execute them against the generated code',
-            tools=AgentTools().tools(),
-            backstory=dedent("""
-            As a Tester, your mission is to thoroughly validate the functionality and reliability of the generated code.
+            As a Code Generator, your primary responsibility is to transform the technical requirements into working code. Your coding skills, knowledge of design patterns, and attention to code quality ensure the generated code is efficient, maintainable, and aligned with the project's goals.
             """),
             verbose=True,
             memory=True,
             allow_delegation=True,
             callbacks=self.callbacks,
             llm=self.get_llm(api_choice, model_choice),
-            max_iter=35,
-            step_callback=lambda x: print_agent_output(x, "Tester")
+            max_iter=15,
+            step_callback=lambda x: print_agent_output(x, "Code Generator")
+        )
+        
+        return agent
+
+    def code_quality_assurance(self, api_choice, model_choice):
+        agent = Agent(
+            role='Code Quality Assurance',
+            goal='Review the generated code to ensure it meets the project\'s quality standards, follows best practices, and is free of potential issues or bugs',
+            tools=AgentTools().tools(),
+            backstory=dedent("""
+            As a Code Quality Assurance expert, your task is to carefully examine the generated code, identify areas for improvement, and provide constructive feedback. Your keen eye for detail and deep understanding of code quality principles help elevate the codebase to the highest standards.
+            """),
+            verbose=True,
+            memory=True,
+            allow_delegation=True,
+            callbacks=self.callbacks,
+            llm=self.get_llm(api_choice, model_choice),
+            max_iter=15,
+            step_callback=lambda x: print_agent_output(x, "Code Quality Assurance")
+        )
+        
+        return agent
+
+    def quality_assurance_engineer(self, api_choice, model_choice):
+        agent = Agent(
+            role='Quality Assurance Engineer',
+            goal='Develop comprehensive test cases based on the technical requirements and perform thorough testing to ensure the code meets the specified functionality and performance criteria',
+            tools=AgentTools().tools(),
+            backstory=dedent("""
+            As a Quality Assurance Engineer, your mission is to verify the correctness, reliability, and performance of the generated code. You create test plans, design test cases, and execute them meticulously to identify any defects or deviations from the expected behavior.
+            """),
+            verbose=True,
+            memory=True,
+            allow_delegation=True,
+            callbacks=self.callbacks,
+            llm=self.get_llm(api_choice, model_choice),
+            max_iter=5,
+            step_callback=lambda x: print_agent_output(x, "Quality Assurance Engineer")
         )
         
         return agent
