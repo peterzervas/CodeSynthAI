@@ -1,5 +1,9 @@
 import os
 import subprocess
+import difflib
+import shutil
+import tempfile
+from datetime import datetime
 from langchain.agents import tool
 
 class AgentTools:
@@ -282,8 +286,221 @@ class AgentTools:
         """
         return f"Analyzing image: {image_url}"
 
+    @tool
+    def insert_code_at_line(file_name: str, line_number: int, code: str) -> str:
+        """
+        Insert code at a specific line number in a file.
+        Example:
+        - file_name: 'example.py'
+        - line_number: 5
+        - code: 'print("Inserted line")'
+        """
+        file_path = os.path.join(AgentTools.PROJECT_DIR, file_name)
+        file_path = os.path.normpath(file_path)
+        try:
+            with open(file_path, 'r') as file:
+                lines = file.readlines()
+            
+            lines.insert(line_number - 1, code + '\n')
+            
+            with open(file_path, 'w') as file:
+                file.writelines(lines)
+            
+            return f"Code inserted successfully at line {line_number} in file '{file_name}'."
+        except FileNotFoundError:
+            return f"Error: File '{file_name}' not found in 'C:\workdir\projects'."
+        except IndexError:
+            return f"Error: Line number {line_number} is out of range for file '{file_name}'."
+
+    @tool
+    def read_file_portion(file_name: str, start_line: int, end_line: int) -> str:
+        """
+        Read a specific portion of a file.
+        Example:
+        - file_name: 'example.py'
+        - start_line: 10
+        - end_line: 20
+        """
+        file_path = os.path.join(AgentTools.PROJECT_DIR, file_name)
+        file_path = os.path.normpath(file_path)
+        try:
+            with open(file_path, 'r') as file:
+                lines = file.readlines()
+            
+            if start_line < 1 or end_line > len(lines):
+                return f"Error: Line range {start_line}-{end_line} is out of bounds for file '{file_name}'."
+            
+            portion = lines[start_line-1:end_line]
+            return f"Contents of file '{file_name}' from line {start_line} to {end_line}:\n{''.join(portion)}"
+        except FileNotFoundError:
+            return f"Error: File '{file_name}' not found in 'C:\workdir\projects'."
+
+    @tool
+    def compare_files(file1: str, file2: str) -> str:
+        """
+        Compare the contents of two files and show differences.
+        Example:
+        - file1: 'old_version.py'
+        - file2: 'new_version.py'
+        """
+        file_path1 = os.path.join(AgentTools.PROJECT_DIR, file1)
+        file_path2 = os.path.join(AgentTools.PROJECT_DIR, file2)
+        file_path1 = os.path.normpath(file_path1)
+        file_path2 = os.path.normpath(file_path2)
+        
+        try:
+            with open(file_path1, 'r') as f1, open(file_path2, 'r') as f2:
+                diff = difflib.unified_diff(f1.readlines(), f2.readlines(), fromfile=file1, tofile=file2)
+            
+            diff_text = ''.join(diff)
+            return f"Differences between '{file1}' and '{file2}':\n{diff_text}" if diff_text else "The files are identical."
+        except FileNotFoundError as e:
+            return f"Error: One or both files not found. {str(e)}"
+
+    @tool
+    def create_file_backup(file_name: str) -> str:
+        """
+        Create a backup of a file before making changes.
+        Example:
+        - file_name: 'important_script.py'
+        """
+        file_path = os.path.join(AgentTools.PROJECT_DIR, file_name)
+        file_path = os.path.normpath(file_path)
+        backup_path = f"{file_path}.bak"
+        
+        try:
+            shutil.copy2(file_path, backup_path)
+            return f"Backup of '{file_name}' created successfully as '{file_name}.bak'."
+        except FileNotFoundError:
+            return f"Error: File '{file_name}' not found in 'C:\workdir\projects'."
+        except shutil.SameFileError:
+            return f"Error: Backup file '{file_name}.bak' already exists."
+
+    @tool
+    def merge_code(file1: str, file2: str, output_file: str) -> str:
+        """
+        Merge code from two different files or sources.
+        Example:
+        - file1: 'feature1.py'
+        - file2: 'feature2.py'
+        - output_file: 'merged_features.py'
+        """
+        file_path1 = os.path.join(AgentTools.PROJECT_DIR, file1)
+        file_path2 = os.path.join(AgentTools.PROJECT_DIR, file2)
+        output_path = os.path.join(AgentTools.PROJECT_DIR, output_file)
+        file_path1 = os.path.normpath(file_path1)
+        file_path2 = os.path.normpath(file_path2)
+        output_path = os.path.normpath(output_path)
+        
+        try:
+            with open(file_path1, 'r') as f1, open(file_path2, 'r') as f2, open(output_path, 'w') as out:
+                out.write(f1.read() + '\n\n' + f2.read())
+            return f"Code from '{file1}' and '{file2}' merged successfully into '{output_file}'."
+        except FileNotFoundError as e:
+            return f"Error: One or more files not found. {str(e)}"
+
+    @tool
+    def find_and_replace(file_name: str, find_str: str, replace_str: str) -> str:
+        """
+        Find a specific string in a file and replace it with new content.
+        Example:
+        - file_name: 'config.py'
+        - find_str: 'DEBUG = False'
+        - replace_str: 'DEBUG = True'
+        """
+        file_path = os.path.join(AgentTools.PROJECT_DIR, file_name)
+        file_path = os.path.normpath(file_path)
+        
+        try:
+            with open(file_path, 'r') as file:
+                content = file.read()
+            
+            new_content = content.replace(find_str, replace_str)
+            
+            with open(file_path, 'w') as file:
+                file.write(new_content)
+            
+            return f"Successfully replaced '{find_str}' with '{replace_str}' in file '{file_name}'."
+        except FileNotFoundError:
+            return f"Error: File '{file_name}' not found in 'C:\workdir\projects'."
+
+    @tool
+    def check_file_exists(file_name: str) -> str:
+        """
+        Check if a file exists before attempting to modify it.
+        Example:
+        - file_name: 'important_data.txt'
+        """
+        file_path = os.path.join(AgentTools.PROJECT_DIR, file_name)
+        file_path = os.path.normpath(file_path)
+        
+        if os.path.exists(file_path):
+            return f"File '{file_name}' exists in 'C:\workdir\projects'."
+        else:
+            return f"File '{file_name}' does not exist in 'C:\workdir\projects'."
+
+    @tool
+    def get_file_info(file_name: str) -> str:
+        """
+        Get information about a file (size, creation date, last modified date).
+        Example:
+        - file_name: 'data_analysis.py'
+        """
+        file_path = os.path.join(AgentTools.PROJECT_DIR, file_name)
+        file_path = os.path.normpath(file_path)
+        
+        try:
+            stats = os.stat(file_path)
+            size = stats.st_size
+            created = datetime.fromtimestamp(stats.st_ctime)
+            modified = datetime.fromtimestamp(stats.st_mtime)
+            
+            return f"""File information for '{file_name}':
+            Size: {size} bytes
+            Created: {created}
+            Last Modified: {modified}"""
+        except FileNotFoundError:
+            return f"Error: File '{file_name}' not found in 'C:\workdir\projects'."
+
+    @tool
+    def create_temp_file(content: str) -> str:
+        """
+        Create a temporary file for intermediate operations.
+        Example:
+        - content: 'Temporary data for processing'
+        """
+        try:
+            with tempfile.NamedTemporaryFile(mode='w+', delete=False, dir=AgentTools.PROJECT_DIR, suffix='.tmp') as temp:
+                temp.write(content)
+                temp_name = os.path.basename(temp.name)
+            
+            return f"Temporary file '{temp_name}' created successfully in 'C:\workdir\projects'."
+        except Exception as e:
+            return f"Error creating temporary file: {str(e)}"
+
+    @tool
+    def revert_changes(file_name: str) -> str:
+        """
+        Revert recent changes made to a file.
+        Example:
+        - file_name: 'modified_script.py'
+        """
+        file_path = os.path.join(AgentTools.PROJECT_DIR, file_name)
+        backup_path = f"{file_path}.bak"
+        file_path = os.path.normpath(file_path)
+        backup_path = os.path.normpath(backup_path)
+        
+        try:
+            if os.path.exists(backup_path):
+                shutil.copy2(backup_path, file_path)
+                return f"Changes to '{file_name}' have been reverted using the backup file."
+            else:
+                return f"Error: Backup file for '{file_name}' not found. Unable to revert changes."
+        except Exception as e:
+            return f"Error reverting changes: {str(e)}"
+
     def tools(self):
-        return [
+        return[
             self.create_python_file,
             self.create_markdown_file,
             self.run_python_file,
@@ -301,5 +518,15 @@ class AgentTools:
             self.lint_code,
             self.list_directory_contents,
             self.analyze_image_dir,
-            self.analyze_image_url
+            self.analyze_image_url,
+            self.insert_code_at_line,
+            self.read_file_portion,
+            self.compare_files,
+            self.create_file_backup,
+            self.merge_code,
+            self.find_and_replace,
+            self.check_file_exists,
+            self.get_file_info,
+            self.create_temp_file,
+            self.revert_changes
         ]

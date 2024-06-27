@@ -26,9 +26,9 @@ class CustomAgents:
 
     def get_manager_llm(self, api_choice, model_choice):
         if api_choice == "OpenAI":
-            return ChatOpenAI(model_name="gpt-4", temperature=0.4)
+            return ChatOpenAI(model_name="claude-3-5-sonnet-20240620", temperature=0.4)
         else:
-            return ChatAnthropic(model="claude-3-sonnet-20240229", anthropic_api_key=ANTHROPIC_API_KEY)
+            return ChatAnthropic(model="claude-3-5-sonnet-20240620", anthropic_api_key=ANTHROPIC_API_KEY)
 
     def requirements_analyst(self, api_choice, model_choice):
         agent = Agent(

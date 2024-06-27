@@ -4,7 +4,6 @@ import streamlit as st
 from loguru import logger
 from dotenv import load_dotenv
 from crewai import Agent, Crew, Process
-from crewai import Crew, Process
 from agents import CustomAgents
 from tasks import CustomTasks
 from utils import print_agent_output
@@ -12,6 +11,13 @@ from tools.AgentTools import AgentTools
 
 # Load environment variables from .env file
 load_dotenv()
+
+# Retrieve Anthropic API key from environment variables
+anthropic_api_key = os.getenv("ANTHROPIC_API_KEY")
+
+# Ensure the API key is loaded
+if not anthropic_api_key:
+    raise ValueError("Anthropic API key not found. Please check your .env file.")
 
 # Configure Loguru
 logger.remove()
@@ -59,7 +65,7 @@ def main(user_input):
     if api_choice == "OpenAI":
         model_choice = st.sidebar.selectbox("Select OpenAI Model", ["gpt-3.5-turbo", "gpt-4-turbo-2024-04-09"])
     else:
-        model_choice = st.sidebar.selectbox("Select Anthropic Model", ["claude-3-haiku-20240307", "claude-3-sonnet-20240229", "claude-3-opus-20240229"])
+        model_choice = st.sidebar.selectbox("Select Anthropic Model", ["claude-3-haiku-20240307", "claude-3-5-sonnet-20240620", "claude-3-opus-20240229"])
 
     iterations = st.sidebar.slider("Number of Iterations", min_value=1, max_value=10, value=5, step=1)
     logger.debug(f"Number of iterations set to {iterations}")

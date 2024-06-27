@@ -50,6 +50,7 @@ class CustomTasks:
                 """
             ),
             agent=agent,
+            human_input=True,
             output_pydantic=TechnicalSpecifications
         )
 
@@ -61,6 +62,7 @@ class CustomTasks:
                 f"""
                 Before commenting that a file doesn't exist, use the 'list_files' tool to check the files in the 'C:\\workdir\\projects' directory.
                 As the Code Generator, your task is to generate clean, efficient, and well-documented code based on the technical requirements.
+                You must not create new files unless required and only work on the existing files, you have created for the current project. 
                 {self.__tip_section()}
                 Use the following technical requirements: {technical_specifications}
                 Ensure that the code follows best practices, design patterns, and coding standards.
@@ -79,6 +81,7 @@ class CustomTasks:
                 """
             ),
             agent=agent,
+            human_input=True
         )
 
     def code_quality_assurance_task(self, agent, generated_code, technical_specifications, user_input):
@@ -91,6 +94,7 @@ class CustomTasks:
                 Before commenting that a file doesn't exist, use the 'list_files' tool to check the files in the 'C:\\workdir\\projects' directory.
                 Only review if the code is fully complete; if not, send it back to the Code Generator to finish the code.
                 As the Code Quality Assurance expert, your task is to review the generated code and provide feedback and suggestions for improvement.
+                You must not create new files unless required and only work on the existing files, you have created for the current project. 
                 {self.__tip_section()}
                 Review the following generated code: {generated_code}
                 Identify areas where the code can be optimized for performance, readability, and maintainability.
@@ -108,6 +112,7 @@ class CustomTasks:
                 """
             ),
             agent=agent,
+            human_input=True
         )
 
     def quality_assurance_engineer_task(self, agent, generated_code, technical_specifications, user_input):
@@ -120,6 +125,7 @@ class CustomTasks:
                 Before commenting that a file doesn't exist, use the 'list_files' tool to check the files in the 'C:\\workdir\\projects' directory.
                 Only test if the code is fully complete; if not, send it back to the development team to finish the code.
                 As the Quality Assurance Engineer, your task is to develop comprehensive test cases and execute them against the generated code.
+                You must not create new files unless required and only work on the existing files, you have created for the current project. 
                 {self.__tip_section()}
                 Test the following generated code: {generated_code}
                 Create test cases that cover various scenarios, edge cases, and potential bugs.
@@ -132,11 +138,9 @@ class CustomTasks:
             ),
             expected_output=dedent(
                 """
-                Comprehensive test cases and test results for the generated code.
-                The test cases should cover various scenarios, edge cases, and potential bugs to ensure the code's correctness and reliability.
-                Detailed feedback and bug reports should be provided based on the test results.
-                The code should be sent back to the Code Quality Assurance expert for a final review.
+                The final functioning code that has been thoroughly tested and meets the specified functionality and performance criteria for the {user_input} & {technical_specifications} project.
                 """
             ),
             agent=agent,
+            human_input=True
         )
